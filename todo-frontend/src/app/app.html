@@ -60,9 +60,31 @@
   <li *ngFor="let todo of filteredTodos()">
     <strong>{{ todo.title }}</strong> - {{ todo.priority }}
     <span *ngIf="todo.completed"> ✅ COMPLETED</span>
+    
+    <!-- Edit button -->
+    <button (click)="startEdit(todo)">Edit</button>
     <button *ngIf="!todo.completed" (click)="completeTodo(todo.id)">Complete</button>
     <button class="delete" (click)="deleteTodo(todo.id)">Delete</button>
   </li>
+
+  <!-- Edit Todo Form (shows only when editing) -->
+  <div *ngIf="editingTodo" class="edit-form">
+    <h3>Edit Todo</h3>
+    <div>
+      <label>Title:</label>
+      <input [(ngModel)]="editingTodo.title" />
+    </div>
+    <div>
+      <label>Priority:</label>
+      <select [(ngModel)]="editingTodo.priority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </div>
+    <button (click)="updateTodo()">Save</button>
+    <button (click)="cancelEdit()">Cancel</button>
+  </div>
 </ul>
 
 <div *ngIf="!isLoading && filteredTodos().length === 0 && todos().length > 0">

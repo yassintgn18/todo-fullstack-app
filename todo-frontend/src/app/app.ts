@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../environments/environment';
 
 
 interface Todo {
@@ -23,7 +24,7 @@ export class App implements OnInit {
   todos = signal<Todo[]>([]);
    
 
-  private apiUrl = 'https://blissful-stillness-production-cc2a.up.railway.app/api/todos';
+  private apiUrl = environment.apiUrl;
 
 
   // Form fields
@@ -34,6 +35,7 @@ export class App implements OnInit {
   titleError = '';
   priorityError = '';
   filterPriority: string = 'all';
+  editingTodo: Todo | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -137,6 +139,36 @@ filteredTodos = () => {
 
 changeFilter(priority: string) {
   this.filterPriority = priority;
+}
+
+startEdit(todo: Todo) {
+  // Create a copy to edit (don't modify original directly)
+  this.editingTodo = { ...todo };
+}
+
+cancelEdit() {
+  this.editingTodo = null;
+}
+
+updateTodo() {
+  if (!this.editingTodo) return;
+
+  this.http.put<Todo>(`${this.apiUrl}/${this.editingTodo.id}`, this.editingTodo)
+    .subscribe({
+      next: (updatedTodo) => {
+        // Update the todo in the list
+        this.todos.update(currentTodos =>
+          currentTodos.map(todo =>
+            todo.id === updatedTodo.id ? updatedTodo : todo
+          )
+        );
+        this.editingTodo = null;
+      },
+      error: (err) => {
+        console.error('Error updating todo:', err);
+        alert('Failed to update todo');
+      }
+    });
 }
 
 }
