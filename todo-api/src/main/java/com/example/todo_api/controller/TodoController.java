@@ -21,7 +21,7 @@ import com.example.todo_api.repository.TodoRepository;
 
 @RestController
 @RequestMapping("/api/todos")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://todolistangluar.netlify.app"})
 public class TodoController {
 
     @Autowired
