@@ -2,6 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../environments/environment';
+
 
 interface Todo {
   id: number;
@@ -20,7 +22,10 @@ interface Todo {
 })
 export class App implements OnInit {
   todos = signal<Todo[]>([]);
-  private apiUrl = 'http://localhost:8081/api/todos';
+   
+
+  private apiUrl = 'https://blissful-stillness-production-cc2a.up.railway.app/api/todos';
+
 
   // Form fields
   newTodoTitle = '';
