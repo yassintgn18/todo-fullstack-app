@@ -1,0 +1,345 @@
+/* ═══════════════════════════════════════════════
+   BLOOM NODES — Register Page
+   (shares auth-scene base from login.css,
+    overrides button gradient)
+═══════════════════════════════════════════════ */
+
+/* Scene wrapper */
+.auth-scene {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  z-index: 2;
+}
+
+/* Orbital rings */
+.orbit-ring {
+  position: fixed;
+  border-radius: 50%;
+  border: 1px solid rgba(139,92,246,0.12);
+  pointer-events: none;
+  z-index: 1;
+  animation: orbitSpin linear infinite;
+}
+
+.orbit-ring--1 {
+  width: 600px; height: 600px;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  animation-duration: 40s;
+  border-color: rgba(139,92,246,0.10);
+}
+
+.orbit-ring--2 {
+  width: 900px; height: 900px;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  animation-duration: 70s;
+  animation-direction: reverse;
+  border-color: rgba(236,72,153,0.07);
+}
+
+.orbit-ring--3 {
+  width: 1200px; height: 1200px;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  animation-duration: 100s;
+  border-color: rgba(6,182,212,0.05);
+}
+
+@keyframes orbitSpin {
+  from { transform: translate(-50%,-50%) rotate(0deg); }
+  to   { transform: translate(-50%,-50%) rotate(360deg); }
+}
+
+/* Accent nodes */
+.accent-node {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: bloomPulse 4s ease-in-out infinite;
+}
+.accent-node--tl {
+  width: 200px; height: 200px;
+  top: -60px; left: -60px;
+  background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%);
+}
+.accent-node--br {
+  width: 300px; height: 300px;
+  bottom: -80px; right: -80px;
+  background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%);
+  animation-delay: -2s;
+}
+
+/* Auth Pod */
+.auth-pod {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(15,15,42,0.75);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(6,182,212,0.22);
+  border-radius: 28px;
+  padding: 36px 36px 32px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05) inset,
+    0 30px 80px rgba(0,0,0,0.6),
+    0 0 60px rgba(6,182,212,0.08);
+  animation: fadeSlideUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.auth-pod::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(6,182,212,0.6), rgba(139,92,246,0.6), transparent);
+}
+
+/* Brand */
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.brand-node {
+  position: relative;
+  width: 40px; height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-node__core {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--nebula-cyan), var(--nebula-purple));
+  box-shadow: var(--glow-cyan);
+  z-index: 2;
+}
+
+.brand-node__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(6,182,212,0.5);
+  animation: orbitSpin 4s linear infinite;
+  width: 28px; height: 28px;
+}
+
+.brand-node__ring--2 {
+  width: 40px; height: 40px;
+  border-color: rgba(139,92,246,0.35);
+  animation-duration: 7s;
+  animation-direction: reverse;
+}
+
+.brand-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  color: #e2e8f0;
+  animation: glowText 4s ease-in-out infinite;
+}
+.brand-title span { color: var(--nebula-cyan); }
+
+.auth-heading {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  color: #f1f5f9;
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+}
+
+.auth-subheading {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  text-align: center;
+  color: rgba(148,163,184,0.8);
+  margin-bottom: 24px;
+}
+
+/* Field Vine */
+.field-vine {
+  margin-bottom: 16px;
+  animation: fadeSlideUp 0.6s ease both;
+}
+.field-vine:nth-child(4) { animation-delay: 0.1s; }
+.field-vine:nth-child(5) { animation-delay: 0.18s; }
+.field-vine:nth-child(6) { animation-delay: 0.26s; }
+
+.vine-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(6,182,212,0.9);
+  margin-bottom: 7px;
+}
+
+.vine-input-wrap { position: relative; }
+
+.vine-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(6,182,212,0.18);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: #e2e8f0;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.vine-input::placeholder { color: rgba(148,163,184,0.4); }
+
+.vine-input:focus {
+  border-color: var(--nebula-cyan);
+  background: rgba(6,182,212,0.06);
+  box-shadow: 0 0 0 3px rgba(6,182,212,0.1), var(--glow-cyan);
+}
+
+.vine-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(139,92,246,0.08));
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.vine-input:focus ~ .vine-glow { opacity: 1; }
+
+/* Error */
+.auth-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(244,63,94,0.12);
+  border: 1px solid rgba(244,63,94,0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: #fca5a5;
+  margin-bottom: 14px;
+  animation: fadeSlideUp 0.3s ease;
+}
+
+/* Bloom Button — register variant (cyan) */
+.bloom-btn {
+  position: relative;
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #0891b2, var(--nebula-cyan), var(--nebula-purple));
+  background-size: 200% 200%;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  color: white;
+  font-weight: 700;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(6,182,212,0.3);
+  margin-bottom: 20px;
+  animation: fadeSlideUp 0.6s 0.35s ease both;
+}
+
+.bloom-btn:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 35px rgba(6,182,212,0.5), var(--glow-cyan);
+}
+
+.bloom-btn:active { transform: translateY(0) scale(0.98); }
+
+.bloom-btn__ripple {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.bloom-btn:hover .bloom-btn__ripple { opacity: 1; }
+.bloom-btn__icon { transition: transform 0.3s ease; }
+.bloom-btn:hover .bloom-btn__icon { transform: translateY(3px); }
+
+/* Vine Divider */
+.vine-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.vine-divider__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(6,182,212,0.3), transparent);
+}
+
+.vine-divider__node {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--nebula-cyan);
+  box-shadow: var(--glow-cyan);
+  animation: bloomPulse 2s ease-in-out infinite;
+}
+
+/* Auth link */
+.auth-link {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: rgba(148,163,184,0.8);
+  text-align: center;
+  animation: fadeSlideUp 0.6s 0.45s ease both;
+}
+
+.vine-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--nebula-purple);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.vine-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 1px;
+  background: var(--nebula-purple);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  transform-origin: left;
+}
+
+.vine-link:hover { color: var(--nebula-pink); }
+.vine-link:hover::after { transform: scaleX(1); }
+.vine-link:hover svg { transform: translateX(-3px); }
+.vine-link svg { transition: transform 0.3s ease; }

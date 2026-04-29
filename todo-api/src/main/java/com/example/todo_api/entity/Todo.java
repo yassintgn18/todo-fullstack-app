@@ -7,9 +7,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+
+
 
 @Entity
 @Table(name = "todos")
@@ -36,6 +40,27 @@ public class Todo {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "due_date_time")
+    private LocalDateTime dueDateTime;
+
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    // Getter and Setter
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    // Getter and Setter
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
+
+   
     // Constructors
     public Todo() {}
 
@@ -43,6 +68,15 @@ public class Todo {
         this.title = title;
         this.description = description;
         this.priority = priority;
+    }
+
+    // Getter and Setter
+    public LocalDateTime getDueDateTime() {
+        return dueDateTime;
+    }
+
+    public void setDueDateTime(LocalDateTime dueDateTime) {
+        this.dueDateTime = dueDateTime;
     }
 
     // Getters and Setters

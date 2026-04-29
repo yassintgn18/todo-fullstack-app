@@ -1,92 +1,204 @@
-<h1>Todo List</h1>
-
-<!-- Form to create new todo -->
-<div class="create-form">
-  <h2>Add New Todo</h2>
+<div class="nebula-bg">
+  <div class="particle-field"></div>
   
-  <!-- Title field with error message -->
-  <div>
-    <label>Title:</label>
-    <input 
-      type="text" 
-      [(ngModel)]="newTodoTitle" 
-      placeholder="Enter task title"
-      (input)="titleError = ''"
-    />
-    <span class="error" *ngIf="titleError">{{ titleError }}</span>
-  </div>
-  
-  <!-- Priority field with error message -->
-  <div>
-    <label>Priority:</label>
-    <select [(ngModel)]="newTodoPriority" (change)="priorityError = ''">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
-    <span class="error" *ngIf="priorityError">{{ priorityError }}</span>
-  </div>
-  
-  <button (click)="createTodo()" [disabled]="isLoading">Add Todo</button>
-</div>
-<hr />
-
-<!-- Loading indicator -->
-<div *ngIf="isLoading" class="spinner-container">
-  <div class="spinner"></div>
-  <p>Loading todos...</p>
-</div>
-
-<!-- No todos message -->
-
-<div *ngIf="!isLoading && todos().length === 0">
-  <p>No todos yet. Create one using the form above!</p>
-</div>
-
-
-<!-- Filter Section -->
-<div class="filter-section">
-  <label>Filter by priority:</label>
-  <select [value]="filterPriority" (change)="changeFilter($any($event.target).value)">
-    <option value="all">All</option>
-    <option value="low">Low</option>
-    <option value="medium">Medium</option>
-    <option value="high">High</option>
-  </select>
-</div>
-
-<!-- Todo list -->
-<ul *ngIf="!isLoading && filteredTodos().length > 0">
-  <li *ngFor="let todo of filteredTodos()">
-    <strong>{{ todo.title }}</strong> - {{ todo.priority }}
-    <span *ngIf="todo.completed"> ✅ COMPLETED</span>
-    
-    <!-- Edit button -->
-    <button (click)="startEdit(todo)">Edit</button>
-    <button *ngIf="!todo.completed" (click)="completeTodo(todo.id)">Complete</button>
-    <button class="delete" (click)="deleteTodo(todo.id)">Delete</button>
-  </li>
-
-  <!-- Edit Todo Form (shows only when editing) -->
-  <div *ngIf="editingTodo" class="edit-form">
-    <h3>Edit Todo</h3>
-    <div>
-      <label>Title:</label>
-      <input [(ngModel)]="editingTodo.title" />
+  <div class="bloom-container">
+    <!-- Header -->
+    <div class="bloom-header">
+      <div class="brand-node">
+        <span class="brand-glow">✦ BLOOM NODES ✦</span>
+      </div>
+      <div class="task-stats">
+        <div class="stat-badge">
+          <span class="stat-num">{{ todos().length }}</span>
+          <span class="stat-label">total</span>
+        </div>
+        <div class="stat-badge active">
+          <span class="stat-num">{{ getActiveTodosCount() }}</span>
+          <span class="stat-label">active</span>
+        </div>
+        <div class="user-aura">
+          <span class="username-glow">👤 {{ username }}</span>
+          <button class="logout-bloom" (click)="logout()">✧ EXIT ✧</button>
+        </div>
+      </div>
     </div>
-    <div>
-      <label>Priority:</label>
-      <select [(ngModel)]="editingTodo.priority">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
-    </div>
-    <button (click)="updateTodo()">Save</button>
-    <button (click)="cancelEdit()">Cancel</button>
-  </div>
-</ul>
 
-<div *ngIf="!isLoading && filteredTodos().length === 0 && todos().length > 0">
-  <p>No todos with priority "{{ filterPriority }}"</p>
+    <!-- Seed Pod (Create Form) -->
+    <div class="seed-pod" [class.open]="seedOpen">
+      <div class="seed-trigger" (click)="seedOpen = !seedOpen">
+        <span class="seed-icon">🌱</span>
+        <span>{{ seedOpen ? 'close seed pod' : 'plant new seed' }}</span>
+      </div>
+      <div class="seed-content" *ngIf="seedOpen">
+        <input type="text" [(ngModel)]="newTodoTitle" placeholder="seed name..." class="seed-input" />
+        <div class="seed-row">
+          <select [(ngModel)]="newTodoPriority" class="seed-select">
+            <option value="low">⚡ low energy</option>
+            <option value="medium">⚡⚡ med energy</option>
+            <option value="high">⚡⚡⚡ high energy</option>
+          </select>
+          <input type="datetime-local" [(ngModel)]="newTodoDueDateTime" class="seed-date" />
+        </div>
+        <div class="seed-row">
+          <select [(ngModel)]="selectedCategoryId" class="seed-select">
+            <option value="">🌿 no category</option>
+            <option *ngFor="let cat of categories" [value]="cat.id">🌿 {{ cat.name }}</option>
+          </select>
+          <button class="seed-bloom-btn" (click)="createTodo()" [disabled]="isLoading">🌱 BLOOM →</button>
+        </div>
+        <div class="seed-error" *ngIf="titleError">{{ titleError }}</div>
+      </div>
+    </div>
+
+    <!-- Filter Vines (Collapsible) -->
+    <div class="filter-vines" [class.open]="filtersOpen">
+      <div class="vine-trigger" (click)="filtersOpen = !filtersOpen">
+        <span class="vine-icon">🍃</span>
+        <span>filter vines</span>
+        <span class="active-dot" *ngIf="hasActiveFilters()"></span>
+      </div>
+      <div class="vine-content" *ngIf="filtersOpen">
+        <div class="vine-group">
+          <label>status</label>
+          <div class="vine-buttons">
+            <button [class.active]="filterStatus === 'all'" (click)="filterStatus = 'all'">all</button>
+            <button [class.active]="filterStatus === 'active'" (click)="filterStatus = 'active'">active</button>
+            <button [class.active]="filterStatus === 'completed'" (click)="filterStatus = 'completed'">done</button>
+          </div>
+        </div>
+        <div class="vine-group">
+          <label>priority</label>
+          <div class="vine-buttons">
+            <button [class.active]="filterPriority === 'all'" (click)="filterPriority = 'all'">all</button>
+            <button [class.active]="filterPriority === 'low'" (click)="filterPriority = 'low'">⚡low</button>
+            <button [class.active]="filterPriority === 'medium'" (click)="filterPriority = 'medium'">⚡⚡med</button>
+            <button [class.active]="filterPriority === 'high'" (click)="filterPriority = 'high'">⚡⚡⚡high</button>
+          </div>
+        </div>
+        <div class="vine-group">
+          <label>due</label>
+          <div class="vine-buttons">
+            <button [class.active]="filterDueDate === 'all'" (click)="filterDueDate = 'all'">all</button>
+            <button [class.active]="filterDueDate === 'today'" (click)="filterDueDate = 'today'">today</button>
+            <button [class.active]="filterDueDate === 'this-week'" (click)="filterDueDate = 'this-week'">week</button>
+            <button [class.active]="filterDueDate === 'overdue'" (click)="filterDueDate = 'overdue'">overdue</button>
+          </div>
+        </div>
+        <div class="vine-group">
+          <label>category</label>
+          <select [(ngModel)]="filterCategoryId" class="vine-select">
+            <option value="all">all categories</option>
+            <option value="none">uncategorized</option>
+            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+          </select>
+        </div>
+        <div class="vine-group">
+          <label>search</label>
+          <input type="text" [(ngModel)]="searchTitle" placeholder="🔍 search nodes..." class="vine-search" />
+        </div>
+        <div class="vine-group">
+          <label>sort by</label>
+          <div class="vine-buttons">
+            <button [class.active]="sortBy === 'createdAt'" (click)="sortBy = 'createdAt'">created</button>
+            <button [class.active]="sortBy === 'dueDateTime'" (click)="sortBy = 'dueDateTime'">due</button>
+            <button [class.active]="sortBy === 'priority'" (click)="sortBy = 'priority'">priority</button>
+            <button [class.active]="sortBy === 'status'" (click)="sortBy = 'status'">status</button>
+            <button (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'" class="sort-arrow">
+              {{ sortOrder === 'asc' ? '↑' : '↓' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-node">
+      <div class="loading-spiral"></div>
+      <p>germinating seeds...</p>
+    </div>
+
+    <!-- Todo Node Grid (SPATIAL LAYOUT) -->
+    <div *ngIf="!isLoading && filteredAndSearchedTodos().length > 0" class="bloom-grid">
+      <div *ngFor="let todo of filteredAndSearchedTodos(); let i = index" 
+           class="bloom-node"
+           [class.completed]="todo.completed"
+           [class.overdue]="isOverdue(todo) && !todo.completed"
+           [class.due-today]="isDueToday(todo) && !todo.completed && !isOverdue(todo)"
+           [style.animation-delay]="i * 0.05 + 's'"
+           [style.width.px]="getNodeSize(todo.priority)"
+           [style.height.px]="getNodeSize(todo.priority)">
+        
+        <!-- Selection Leaf -->
+        <input type="checkbox" class="node-select" 
+               [checked]="selectedTodoIds.has(todo.id)" 
+               (change)="toggleSelection(todo.id)" />
+        
+        <!-- Category Badge -->
+        <div *ngIf="todo.category" class="node-category" [style.backgroundColor]="todo.category.color">
+          {{ todo.category.name }}
+        </div>
+        
+        <!-- Title -->
+        <div class="node-title">{{ todo.title }}</div>
+        
+        <!-- Priority Energy -->
+        <div class="node-energy">
+          <span *ngFor="let e of getEnergyLevel(todo.priority)" class="energy-dot">⚡</span>
+        </div>
+        
+        <!-- Due Date -->
+        <div class="node-due" *ngIf="todo.dueDateTime">
+          📅 {{ formatDueDateTime(todo.dueDateTime) }}
+        </div>
+        
+        <!-- Status Badges -->
+        <div class="node-status">
+          <span *ngIf="todo.completed" class="wilting">✧ wilted ✧</span>
+          <span *ngIf="isOverdue(todo) && !todo.completed" class="overdue-glow">⚠️ overdue</span>
+          <span *ngIf="isDueToday(todo) && !todo.completed && !isOverdue(todo)" class="today-glow">📅 today</span>
+        </div>
+        
+        <!-- Actions -->
+        <div class="node-actions">
+          <button class="action-bloom" (click)="startEdit(todo)" title="edit node">✧ edit</button>
+          <button class="action-bloom" *ngIf="!todo.completed" (click)="completeTodo(todo.id)" title="bloom/wilt">🌱 wilt</button>
+          <button class="action-bloom" *ngIf="todo.completed" (click)="incompleteTodo(todo.id)" title="revive">🌿 revive</button>
+          <button class="action-bloom danger" (click)="deleteTodo(todo.id)" title="prune node">✧ prune</button>
+        </div>
+        
+        <!-- Edit Form Inline -->
+        <div *ngIf="editingTodoId === todo.id && editingTodo" class="node-edit">
+          <input [(ngModel)]="editingTodo.title" placeholder="rename seed" />
+          <select [(ngModel)]="editingTodo.priority">
+            <option value="low">⚡ low</option>
+            <option value="medium">⚡⚡ med</option>
+            <option value="high">⚡⚡⚡ high</option>
+          </select>
+          <input type="datetime-local" [(ngModel)]="editingTodo.dueDateTime" />
+          <button (click)="updateTodo()">💾 save</button>
+          <button (click)="cancelEdit()">✖ cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Harvest Bar (Bulk Actions) -->
+    <div class="harvest-bar" *ngIf="selectedTodoIds.size > 0">
+      <span class="harvest-count">{{ selectedTodoIds.size }} seed{{ selectedTodoIds.size !== 1 ? 's' : '' }} selected</span>
+      <button class="harvest-btn" (click)="bulkComplete()">🌸 harvest (complete)</button>
+      <button class="harvest-btn prune" (click)="bulkDelete()">✂️ prune (delete)</button>
+    </div>
+
+    <!-- Empty States -->
+    <div *ngIf="!isLoading && todos().length === 0" class="empty-garden">
+      <div class="empty-seed">🌱</div>
+      <h3>your garden is empty</h3>
+      <p>open the seed pod above to plant your first node</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredAndSearchedTodos().length === 0 && todos().length > 0" class="empty-garden">
+      <div class="empty-seed">🔍</div>
+      <h3>no nodes match</h3>
+      <p>try different filter vines</p>
+    </div>
+  </div>
 </div>
